@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
+  <meta name="theme-color" content="#05070d" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>ORBITALIS — Gravity Sandbox</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='16' fill='%2306090f'/%3E%3Ccircle cx='16' cy='16' r='5' fill='%23e7bd7d'/%3E%3Cellipse cx='16' cy='16' rx='12' ry='5' transform='rotate(-28 16 16)' fill='none' stroke='%23e7bd7d' stroke-opacity='.55'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="./src/style.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "./vendor/three/three.module.min.js",
+        "three/addons/": "./vendor/three/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <div id="app">
+    <div id="scene" aria-hidden="true"></div>
+    <div class="scene-wash" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+
+    <div id="labels" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 48 48" fill="none">
+            <circle cx="24" cy="24" r="15.5" stroke="currentColor" stroke-opacity=".28"/>
+            <ellipse cx="24" cy="24" rx="21" ry="8.5" transform="rotate(-28 24 24)" stroke="currentColor" stroke-opacity=".7"/>
+            <circle cx="24" cy="24" r="5.2" fill="currentColor"/>
+            <circle cx="40.8" cy="14.7" r="2.4" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="brand-copy">
+          <div class="brand-name">ORBITALIS</div>
+          <div class="brand-sub">GRAVITY SANDBOX</div>
+        </div>
+      </div>
+
+      <div class="sim-status" id="sim-status">
+        <span class="live-dot"></span>
+        <span>SIMULATION LIVE</span>
+        <span class="status-divider"></span>
+        <span class="sector">SECTOR 07</span>
+      </div>
+
+      <div class="top-actions">
+        <button class="icon-btn sound-on" id="sound-btn" aria-label="Toggle sound" title="Sound">
+          <svg class="sound-waves" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <path d="M4 9.2v5.6h3.2L13 19V5L7.2 9.2H4Z" fill="currentColor" stroke="none"/>
+            <path d="M16 8.6a5 5 0 0 1 0 6.8M18.7 6a8.8 8.8 0 0 1 0 12"/>
+          </svg>
+          <svg class="sound-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <path d="M4 9.2v5.6h3.2L13 19V5L7.2 9.2H4Z" fill="currentColor" stroke="none"/>
+            <path d="m17 9 5 5m0-5-5 5"/>
+          </svg>
+        </button>
+        <button class="icon-btn" id="home-btn" aria-label="Fit system in view" title="Fit system">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>
+            <circle cx="12" cy="12" r="2.6"/>
+          </svg>
+        </button>
+        <button class="icon-btn" id="help-btn" aria-label="How to play" title="How to play">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <circle cx="12" cy="12" r="8.5"/>
+            <path d="M9.6 9.2a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1.1 1-1.1 1.9"/>
+            <circle cx="12" cy="16.7" r=".8" fill="currentColor" stroke="none"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <aside class="mission-panel glass" id="mission-panel">
+      <div class="panel-kicker">
+        <span class="kicker-line"></span>
+        <span>TRIAL <b id="trial-number">01</b> / 05</span>
+        <span class="mission-dots" id="mission-dots"></span>
+      </div>
+      <h1 class="mission-title" id="trial-title">First Light</h1>
+      <p class="mission-desc" id="trial-desc">Seed a new world into the Helios system.</p>
+      <div class="mission-meta">
+        <div class="mission-hint"><span class="hint-icon">✦</span><span id="trial-hint">Any orbit, any world</span></div>
+        <div class="mission-reward"><span>REWARD</span><b id="trial-reward">+120</b></div>
+      </div>
+      <div class="mission-progress-track"><span id="mission-progress"></span></div>
+      <div class="panel-corner" aria-hidden="true"></div>
+    </aside>
+
+    <aside class="vitals-panel glass" id="vitals-panel">
+      <div class="vitals-head">
+        <div>
+          <div class="panel-kicker"><span class="kicker-line"></span><span>SYSTEM VITALS</span></div>
+          <div class="star-name"><span class="star-glyph"></span> HELIOS <em>G2V</em></div>
+        </div>
+        <div class="stardust">
+          <span>STARDUST</span>
+          <strong id="stardust">0</strong>
+        </div>
+      </div>
+      <div class="vitals-grid">
+        <div class="vital"><span>WORLDS</span><b id="world-count">04</b></div>
+        <div class="vital"><span>MOONS</span><b id="moon-count">01</b></div>
+        <div class="vital"><span>STABILITY</span><b id="stability">98<span>%</span></b></div>
+        <div class="vital"><span>EPOCH</span><b>4.6<span>Gyr</span></b></div>
+      </div>
+      <div class="signal-row">
+        <span>GRAVITATIONAL SIGNAL</span>
+        <div class="signal-bars" id="signal-bars" aria-hidden="true"></div>
+      </div>
+      <div class="panel-corner" aria-hidden="true"></div>
+    </aside>
+
+    <div class="world-tag hidden" id="habitable-tag">
+      <span class="tag-line"></span>
+      <span>GOLDILOCKS ZONE</span>
+    </div>
+
+    <aside class="selected-card glass hidden" id="selected-card" aria-live="polite">
+      <button class="card-close" id="selected-close" aria-label="Deselect body">×</button>
+      <div class="panel-kicker"><span class="kicker-line"></span><span id="selected-kind">SELECTED WORLD</span></div>
+      <div class="selected-title-row">
+        <h2 id="selected-name">Pelagos</h2>
+        <span class="body-class" id="selected-class">OCEAN</span>
+      </div>
+      <div class="selected-stats">
+        <div><span>ORBIT</span><b id="selected-orbit">2.14 AU</b></div>
+        <div><span>MASS</span><b id="selected-mass">1.8 M⊕</b></div>
+        <div><span>VELOCITY</span><b id="selected-velocity">5.1 km/s</b></div>
+        <div><span>PERIOD</span><b id="selected-period">22.4 d</b></div>
+      </div>
+      <div class="selected-actions" id="selected-actions">
+        <button class="action-btn" id="focus-body-btn"><span class="action-icon">◎</span>Focus</button>
+        <button class="action-btn" id="add-moon-btn"><span class="action-icon">＋</span>Add moon</button>
+        <button class="action-btn" id="boost-btn"><span class="action-icon">⟳</span>Boost orbit</button>
+        <button class="action-btn danger" id="delete-body-btn" aria-label="Remove body" title="Remove this world"><span class="action-icon">✕</span></button>
+      </div>
+    </aside>
+
+    <div class="toast-stack" id="toast-stack" aria-live="polite"></div>
+
+    <div class="controls-hint glass" id="controls-hint">
+      <span class="mouse-icon" aria-hidden="true"></span>
+      <span id="controls-hint-text">Drag to orbit · Scroll to zoom · Tap a world</span>
+      <button id="hint-close" aria-label="Dismiss controls hint">×</button>
+    </div>
+
+    <div class="bottom-area">
+      <div class="time-cluster glass">
+        <button class="time-btn" id="pause-btn" aria-label="Pause simulation" title="Pause">
+          <svg class="pause-icon" viewBox="0 0 20 20" fill="currentColor"><rect x="5" y="4" width="3.5" height="12" rx="1"/><rect x="11.5" y="4" width="3.5" height="12" rx="1"/></svg>
+          <svg class="play-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M6 3.8a1 1 0 0 1 1.5-.87l9.2 5.7a1.2 1.2 0 0 1 0 2.04l-9.2 5.7A1 1 0 0 1 6 15.5V3.8Z"/></svg>
+        </button>
+        <div class="time-divider"></div>
+        <button class="speed-btn active" data-speed="1">1×</button>
+        <button class="speed-btn" data-speed="2">2×</button>
+        <button class="speed-btn" data-speed="4">4×</button>
+        <div class="time-divider"></div>
+        <div class="sim-clock"><span>EPOCH</span><b id="sim-clock">00:00:00</b></div>
+      </div>
+
+      <nav class="dock glass" aria-label="Simulation tools">
+        <button class="tool tool-primary" id="add-btn" aria-label="Create a world">
+          <span class="tool-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="6.4"/><path d="M12 5.6v12.8M5.6 12h12.8"/></svg>
+          </span>
+          <span class="tool-label">World</span>
+          <kbd>W</kbd>
+        </button>
+        <button class="tool" id="comet-btn" aria-label="Launch a comet">
+          <span class="tool-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="16.5" cy="7.5" r="3.1"/><path d="M14.2 9.7 4 20M12.6 12.4l-3-1.2M17.8 10.8l1.1 3"/></svg>
+          </span>
+          <span class="tool-label">Comet</span>
+        </button>
+        <button class="tool" id="moon-btn" aria-label="Add a moon to selected world" disabled>
+          <span class="tool-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="8" cy="9" r="4.1"/><circle cx="17.2" cy="15.2" r="2.1"/><path d="M11 11.5c1.8 1.2 3.2 2 4.7 2.6"/></svg>
+          </span>
+          <span class="tool-label">Moon</span>
+        </button>
+        <button class="tool" id="focus-btn" aria-label="Focus on selected world">
+          <span class="tool-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/><circle cx="12" cy="12" r="3.1"/></svg>
+          </span>
+          <span class="tool-label">Focus</span>
+        </button>
+        <div class="dock-divider"></div>
+        <button class="tool tool-reset" id="reset-btn" aria-label="Reset the system" title="Reset system">
+          <span class="tool-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M5 8a8.5 8.5 0 1 1-.7 7.4"/><path d="M4 3.5V9h5.4"/></svg>
+          </span>
+          <span class="tool-label">Reset</span>
+        </button>
+      </nav>
+    </div>
+
+    <section class="forge-sheet" id="forge-sheet" aria-hidden="true" aria-label="Create a world">
+      <div class="forge-inner">
+        <div class="forge-head">
+          <div>
+            <div class="panel-kicker"><span class="kicker-line"></span><span>CELESTIAL FORGE</span></div>
+            <h2>Seed a new world</h2>
+          </div>
+          <button class="sheet-close" id="forge-close" aria-label="Close forge">×</button>
+        </div>
+
+        <div class="body-grid" id="body-grid">
+          <button class="body-card selected" data-type="terra">
+            <span class="body-orb terra-orb"></span>
+            <span class="body-card-copy"><b>Terra</b><em>Terrestrial</em></span>
+            <span class="body-card-check">✓</span>
+          </button>
+          <button class="body-card" data-type="ocean">
+            <span class="body-orb ocean-orb"></span>
+            <span class="body-card-copy"><b>Ocean</b><em>Terrestrial</em></span>
+            <span class="body-card-check">✓</span>
+          </button>
+          <button class="body-card" data-type="desert">
+            <span class="body-orb desert-orb"></span>
+            <span class="body-card-copy"><b>Desert</b><em>Terrestrial</em></span>
+            <span class="body-card-check">✓</span>
+          </button>
+          <button class="body-card" data-type="ice">
+            <span class="body-orb ice-orb"></span>
+            <span class="body-card-copy"><b>Ice</b><em>Terrestrial</em></span>
+            <span class="body-card-check">✓</span>
+          </button>
+          <button class="body-card" data-type="gas">
+            <span class="body-orb gas-orb"></span>
+            <span class="body-card-copy"><b>Jovian</b><em>Gas giant</em></span>
+            <span class="body-card-check">✓</span>
+          </button>
+        </div>
+
+        <div class="orbit-picker">
+          <div class="orbit-head">
+            <div class="orbit-label"><span>ORBIT RADIUS</span><b id="orbit-value">2.2 AU</b></div>
+            <span class="zone-badge" id="zone-badge">GOLDILOCKS</span>
+          </div>
+          <div class="slider-wrap">
+            <div class="zone-ribbon" aria-hidden="true"></div>
+            <input type="range" id="orbit-slider" min="9" max="46" step="0.5" value="22" aria-label="Orbit radius" />
+            <div class="slider-ticks" aria-hidden="true"><span>0.9</span><span>2.2</span><span>3.5</span><span>4.6 AU</span></div>
+          </div>
+          <p class="orbit-note" id="orbit-note">A temperate orbit. Liquid water is possible here.</p>
+        </div>
+
+        <div class="forge-footer">
+          <div class="forge-mass"><span>PROJECTED MASS</span><b id="forge-mass">1.0 M⊕</b></div>
+          <button class="deploy-btn" id="deploy-btn">
+            <span>Deploy world</span>
+            <span class="deploy-arrow">→</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <div class="modal-layer hidden" id="modal-layer">
+      <div class="modal-backdrop"></div>
+      <section class="modal-card completion-card" id="completion-modal" aria-hidden="true">
+        <div class="completion-orbit" aria-hidden="true">
+          <span class="completion-star"></span>
+          <span class="completion-planet"></span>
+        </div>
+        <div class="panel-kicker"><span class="kicker-line"></span><span>SECTOR 07 / SYSTEM ONLINE</span></div>
+        <h2>The orrery lives.</h2>
+        <p class="modal-lede">Five trials, one living system. You have proven that gravity is not a force to fear — it is a material to shape.</p>
+        <div class="completion-stats">
+          <div><span>STARDUST EARNED</span><b id="final-score">0</b></div>
+          <div><span>WORLDS SEEDED</span><b id="final-worlds">0</b></div>
+          <div><span>TRIALS CLEARED</span><b>5 / 5</b></div>
+        </div>
+        <div class="modal-actions">
+          <button class="ghost-btn" id="new-system-btn">New system</button>
+          <button class="deploy-btn" id="keep-exploring-btn"><span>Continue in sandbox</span><span class="deploy-arrow">→</span></button>
+        </div>
+      </section>
+      <section class="modal-card" id="help-modal" aria-hidden="true">
+        <button class="sheet-close" id="help-close" aria-label="Close help">×</button>
+        <div class="panel-kicker"><span class="kicker-line"></span><span>FLIGHT MANUAL</span></div>
+        <h2>Shape a living system.</h2>
+        <p class="modal-lede">Every world bends the fabric of the simulation. Build, collide, and watch gravity write the next chapter.</p>
+        <div class="help-grid">
+          <div class="help-item"><span class="help-key">01</span><b>Orbit</b><p>Drag one finger anywhere in space to rotate your view. Pinch to zoom. The frame icon fits the whole system in view.</p></div>
+          <div class="help-item"><span class="help-key">02</span><b>Forge</b><p>Press <em>World</em>, choose a class, then set its orbital radius. Worlds are born in stable orbit.</p></div>
+          <div class="help-item"><span class="help-key">03</span><b>Disturb</b><p>Select a world to add a moon, boost its orbit, or launch a comet on an intercept course.</p></div>
+          <div class="help-item"><span class="help-key">04</span><b>Observe</b><p>Time controls change the flow of physics. Complete the five trials to bring the system online.</p></div>
+        </div>
+        <div class="modal-actions"><button class="deploy-btn" id="help-got-it">Understood <span class="deploy-arrow">→</span></button></div>
+      </section>
+    </div>
+
+    <div class="intro-veil" id="intro-veil" aria-hidden="true">
+      <div class="intro-word">ORBITALIS</div>
+      <div class="intro-rule"></div>
+      <div class="intro-sub">A GRAVITY SANDBOX</div>
+    </div>
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>

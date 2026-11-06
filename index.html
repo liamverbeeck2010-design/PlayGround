@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#101510" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='27' font-size='27' fill='%23c0d786'%3E✳%3C/text%3E%3C/svg%3E" />
+  <title>GODSIM — Shape the ages</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Godsim home"><span class="brand-mark">✳</span><span>GOD<span class="brand-light">SIM</span></span></a>
+      <div class="top-center"><span class="live-dot"></span><span>WORLD SIMULATION</span><span class="top-divider">/</span><span id="turn-label">TURN 01</span></div>
+      <div class="header-actions"><span class="save-state"><i></i> AUTOSAVED</span><button class="icon-button" id="sound-toggle" aria-label="Toggle sound" title="Sound effects">◖</button><button class="icon-button" id="reset-button" aria-label="New world" title="Start a new world">↻</button></div>
+    </header>
+
+    <main>
+      <section class="hero-row">
+        <div><div class="eyebrow"><span class="eyebrow-line"></span> A LIVING WORLD, YOURS TO SHAPE</div><h1>Small beginnings.<br><em>Infinite futures.</em></h1></div>
+        <div class="hero-note"><span class="note-star">✳</span><p>One life. A whole world.<br>What will you make of it?</p></div>
+      </section>
+
+      <section class="overview-grid" aria-label="World overview">
+        <article class="panel world-panel">
+          <div class="panel-head"><div><div class="section-label">THE KNOWN WORLD</div><div class="panel-title">A world in motion</div></div><div class="map-key"><span><i class="key-dot people"></i>People</span><span><i class="key-dot frontier"></i>Frontier</span></div></div>
+          <div class="world-map" id="world-map" aria-label="Illustrated map of the world"></div>
+          <div class="map-footer"><span><b id="settlement-count">1</b> SETTLEMENT<span class="muted-separator"> · </span><b id="world-age">YEAR 0</b></span><span class="coordinates">N 42° 18′ &nbsp; E 18° 04′</span></div>
+        </article>
+        <article class="panel status-panel">
+          <div class="panel-head"><div><div class="section-label">WORLD STATUS</div><div class="panel-title">The big picture</div></div><span class="status-icon">◎</span></div>
+          <div class="era-block"><span class="small-label">CURRENT ERA</span><div class="era-name" id="era-name">Stone Age</div><div class="era-progress"><div class="era-progress-bar" id="era-progress"></div></div><div class="progress-caption"><span id="next-era">The first spark awaits</span><span id="progress-pct">0%</span></div></div>
+          <div class="metric-row"><div class="metric"><span class="small-label">POPULATION</span><strong id="population">1</strong><span class="metric-caption">souls alive</span></div><div class="metric"><span class="small-label">CIVILIZATIONS</span><strong id="civ-count">1</strong><span class="metric-caption">cultures rising</span></div><div class="metric"><span class="small-label">ACTIVE WARS</span><strong id="war-count">0</strong><span class="metric-caption" id="war-caption">peace reigns</span></div></div>
+          <div class="divine-favor"><span class="favor-icon">✧</span><div><span class="small-label">DIVINE INFLUENCE</span><p id="favor-copy">Your first command will set the tone.</p></div><span class="favor-value" id="favor-value">100</span></div>
+        </article>
+      </section>
+
+      <section class="lower-grid">
+        <div class="left-column">
+          <section class="panel civ-panel"><div class="panel-head"><div><div class="section-label">MORTALS BELOW</div><div class="panel-title">Civilizations <span class="title-count" id="civ-title-count">01</span></div></div><span class="sort-label">SORTED BY INFLUENCE <span>⌄</span></span></div><div id="civilizations" class="civilizations"></div></section>
+          <section class="panel chronicle-panel"><div class="panel-head chronicle-head"><div><div class="section-label">A RECORD OF YOUR WORLD</div><div class="panel-title">The chronicle</div></div><span class="chronicle-count" id="chronicle-count">01</span></div><div id="chronicle" class="chronicle"></div></section>
+        </div>
+        <section class="panel action-panel"><div class="panel-head"><div><div class="section-label">YOUR WILL, MADE REAL</div><div class="panel-title">Choose a divine act</div></div><span class="power-glyph">✳</span></div><p class="action-intro">Every act nudges history. The world keeps moving after you do.</p><div id="actions" class="action-list"></div><form id="custom-form" class="custom-form"><label for="custom-command" class="small-label">OR WRITE YOUR OWN DECREE</label><div class="input-wrap"><input id="custom-command" type="text" autocomplete="off" placeholder="e.g. Bless the harvest…" maxlength="120" /><button type="submit" aria-label="Send decree">↗</button></div><div class="input-hint">Try any command. The world will interpret it.</div></form><div class="turn-foot"><span>ONE COMMAND PER TURN</span><span class="turn-indicator"><i></i> AWAITING YOUR WILL</span></div></section>
+      </section>
+    </main>
+    <footer><span>GODSIM <i>·</i> THE WORLD IS YOURS</span><span>NO DESTINY IS WRITTEN</span></footer>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="modal-backdrop" id="reset-modal" hidden><div class="modal"><div class="section-label">A NEW BEGINNING</div><h2>Let this world go?</h2><p>Your current world will be lost. A new one will begin with a single human.</p><div class="modal-actions"><button class="quiet-button" id="cancel-reset">Keep this world</button><button class="danger-button" id="confirm-reset">Begin again <span>↗</span></button></div></div></div>
+  <script src="game.js"></script>
+</body>
+</html>
